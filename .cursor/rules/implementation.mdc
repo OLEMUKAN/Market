@@ -1,0 +1,513 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ALWAYS REMEMBER TO UPDATE THE NEEDED MD FILES AFTER EACH IMPLEMENTATION
+
+AgriMarket Uganda – MVP Implementation Plan (Revised & Requirement-Focused)
+
+Objective: To guide the development of the AgriMarket Uganda Android MVP, focusing on a feature-by-feature implementation flow for easier testing and bug tracking, while ensuring all specified project requirements are met.
+
+Overarching Principles:
+
+Incremental Development: Build and test features in vertical slices.
+
+Requirement Tracking: Each phase will explicitly address relevant project requirements.
+
+Early Testing: Test each feature module as it's completed.
+
+Version Control: Commit frequently after each logical step.
+
+Phase 0: Project Foundation & Initial Setup
+
+Step 0.1: Environment, Firebase, and Android Project Initialization
+
+Environment & Accounts:
+
+Ensure Android Studio and Kotlin are ready.
+
+Create/access Firebase account.
+
+Firebase Project Setup:
+
+Create "AgriMarket Uganda" project in Firebase Console.
+
+Register the Android app with its package name.
+
+Download google-services.json.
+
+Android Studio Project Creation:
+
+Create a new Android Studio project using an "Empty Compose Activity" template.
+
+Configure name, package name, language (Kotlin), and Min SDK.
+
+Firebase Integration in Android Project:
+
+Place google-services.json in the app directory.
+
+Add Firebase BoM and Google Services plugin to build.gradle files.
+
+Enable Firebase Services:
+
+Authentication: Enable "Email/Password" sign-in method.
+
+Firestore Database: Create Firestore in "Production mode," select a region.
+
+Firestore Security Rules (Initial):
+
+Implement basic rules: Allow authenticated reads for commodities, disallow client writes (or admin-only). Publish.
+
+Basic Android Project Configuration:
+
+Add INTERNET permission to AndroidManifest.xml.
+
+Create the planned directory structure (data, ui, navigation, etc.).
+
+Add initial dependencies (Core Kotlin, basic Compose) to app/build.gradle. Sync.
+
+Project Requirements Addressed (Partially):
+
+2. Core Functionality: Initial setup for multi-screen navigation (by choosing Compose).
+
+5. Technical Requirements: Foundation for clean architecture.
+
+Phase 1: Theming & Visual Foundation
+
+Step 1.1: Define Visual Identity
+
+Custom Launcher Icon:
+
+Design/obtain the custom launcher icon.
+
+Use Android Studio's "Image Asset" tool to generate and replace default icons in res/mipmap-* directories.
+
+Requirement: 1. Visual Design & Theming (Custom launcher icon)
+
+Color Scheme:
+
+Define at least three custom colors (Primary, Secondary, Background) in ui/theme/Color.kt.
+
+Requirement: 1. Visual Design & Theming (Custom color scheme)
+
+Typography:
+
+Select a non-default font (e.g., from Google Fonts).
+
+Download font files and add them to res/font/.
+
+Define FontFamily and at least one custom text style in ui/theme/Type.kt.
+
+Requirement: 1. Visual Design & Theming (Non-default fonts)
+
+Shapes:
+
+Define rounded corner shapes for components like Cards in ui/theme/Shape.kt.
+
+Requirement: 1. Visual Design & Theming (Defined shapes)
+
+Material Theme Implementation:
+
+Combine colors, typography, and shapes into a custom MaterialTheme in ui/theme/Theme.kt.
+
+Apply this theme in MainActivity.kt's setContent block.
+
+Requirement: 1. Visual Design & Theming (Material Theme implementation)
+
+Step 1.2: Resource Management Setup
+
+String Externalization:
+
+Create res/values/strings.xml. Add a basic app_name string.
+
+Commitment: All user-facing text from this point forward will be added here.
+
+Requirement: 5. Technical Requirements (No hardcoded Strings)
+
+Dimension Management:
+
+Create res/values/dimens.xml. Add a few initial common dimensions (e.g., padding_medium).
+
+Commitment: Spacing, padding, and sizes will utilize these or direct dp/sp units as appropriate.
+
+Requirement: 5. Technical Requirements (Dimension Management)
+
+Project Requirements Addressed (Fully or Initiated):
+
+1. Visual Design & Theming: All sub-points addressed.
+
+5. Technical Requirements: String and dimension management practices established.
+
+Phase 2: Authentication Module (Login Screen)
+
+Step 2.1: Data Layer for Authentication
+
+Data Model (User.kt - optional): If specific user data needs to be held beyond FirebaseUser.
+
+Repository Interface (AuthRepository.kt): Define methods for sign-in, get current user.
+
+Repository Implementation (AuthRepositoryImpl.kt):
+
+Inject FirebaseAuth.
+
+Implement sign-in logic using Firebase SDK, returning Flow<Resource<FirebaseUser>>.
+
+Implement getCurrentUser().
+
+DI for Auth: Provide FirebaseAuth and AuthRepository (via Hilt module or manual DI container).
+
+Step 2.2: ViewModel for Authentication (AuthViewModel.kt)
+
+Create AuthViewModel extending ViewModel.
+
+Inject AuthRepository.
+
+Expose StateFlow for login state (Resource<FirebaseUser>) and current user (FirebaseUser?).
+
+Implement login(email, password) function calling the repository.
+
+Implement a function to check initial login state.
+
+Requirement: 2. Core Functionality (State management using ViewModel)
+
+Step 2.3: UI for Login Screen (LoginScreen.kt)
+
+Layout & Components:
+
+Use Column for layout.
+
+Implement TextField for email and password.
+
+Requirement: 3. UI Components (Implementation of Material Design components - TextFields)
+
+Implement a "Login" Button.
+
+Requirement: 3. UI Components (Implementation of Material Design components - Buttons)
+
+User Input & Validation:
+
+Manage email and password state within the Composable (using remember).
+
+Implement basic client-side validation (e.g., non-empty fields).
+
+Requirement: 2. Core Functionality (User input handling - form validation)
+
+State Observation & UI Updates:
+
+Collect loginState from AuthViewModel.
+
+Show loading indicator during login attempt.
+
+Display error messages from Resource.Error.
+
+Interactivity:
+
+Handle "Login" button click to call authViewModel.login().
+
+Requirement: 2. Core Functionality (User input handling - button clicks)
+
+Ensure buttons have visual feedback (ripple effect by default with Material buttons).
+
+Requirement: 4. Interactive Elements (Clickable components with visual feedback)
+
+Styling: Apply the custom theme (colors, fonts, shapes) to all components.
+
+Requirement: 1. Visual Design & Theming (Consistent styling)
+
+Step 2.4: Navigation Setup (Initial)
+
+Navigation Routes (Screen.kt): Define Screen.Login and Screen.Home.
+
+Navigation Host (AppNavigation.kt):
+
+Set up NavHost with LoginScreen as an initial composable.
+
+Implement logic to navigate to HomeScreen on successful login (this will be fully fleshed out later).
+
+Determine startDestination based on authViewModel.currentUser.
+
+Requirement: 2. Core Functionality (Multi-screen navigation - minimum of two screens)
+
+Step 2.5: Testing Authentication Module
+
+Unit Tests: For AuthViewModel logic (e.g., how it handles repository responses).
+
+UI Tests: For LoginScreen (input, button click, error display).
+
+Manual Tests:
+
+Valid login.
+
+Invalid credentials.
+
+Empty fields.
+
+Screen rotation during login process (check state retention).
+
+Requirement: 2. Core Functionality (Configuration Changes)
+
+Project Requirements Addressed:
+
+1. Visual Design & Theming: Consistent styling.
+
+2. Core Functionality: State management, User input handling, Initial multi-screen navigation.
+
+3. UI Components: TextFields, Buttons.
+
+4. Interactive Elements: Clickable components.
+
+5. Technical Requirements: Clean architecture principles applied to this module.
+
+Phase 3: Core Application - Commodity Listing (Home Screen)
+
+Step 3.1: Data Layer for Commodities
+
+Data Models (PriceDetail.kt, Commodity.kt):
+
+Define as per MVP specs, ensuring no-arg constructors for Firestore and @PropertyName if needed.
+
+Commodity.kt should include getAverageMarketPrice().
+
+Repository Interface (CommodityRepository.kt): Define getAllCommodities(), getCommodityById().
+
+Repository Implementation (CommodityRepositoryImpl.kt):
+
+Inject FirebaseFirestore.
+
+Implement getAllCommodities() to fetch data from the commodities collection, parse documents into Commodity objects (handle nested prices map carefully), and return Flow<Resource<List<Commodity>>>.
+
+Implement getCommodityById() similarly.
+
+DI for Commodities: Provide FirebaseFirestore and CommodityRepository.
+
+Populate Firestore: Add at least 5 commodity documents to Firestore, ensuring at least 3 have valid (even placeholder) imageUrl values, to meet the LazyColumn item requirement.
+
+Step 3.2: ViewModel for Home Screen (HomeViewModel.kt)
+
+Create HomeViewModel extending ViewModel.
+
+Inject CommodityRepository.
+
+Expose StateFlow for Resource<List<Commodity>>.
+
+In init or a public function, fetch commodities from the repository.
+
+Requirement: 2. Core Functionality (State management using ViewModel)
+
+Step 3.3: UI for Home Screen (HomeScreen.kt)
+
+Layout & App Bar:
+
+Use Scaffold and implement a TopAppBar.
+
+Requirement: 1. Visual Design & Theming (App Bar)
+
+Commodity List (LazyColumn):
+
+Observe commodity state from HomeViewModel.
+
+Display loading/error/empty states.
+
+Use LazyColumn to display the list of commodities.
+
+Ensure LazyColumn has a minimum of five (5) items displayed (based on Firestore data).
+
+Requirement: 3. UI Components (Scrollable list - LazyColumn, min 5 items)
+
+Commodity Item Card (CommodityCard.kt - Reusable Component):
+
+Design a Card to display commodity name, image, and average market price.
+
+Requirement: 3. UI Components (Implementation of Material Design components - Cards)
+
+Load images using Coil, include placeholders and error drawables.
+
+Ensure at least three items in the list contain both text and images.
+
+Requirement: 3. UI Components (Scrollable list - at least 3 items with text and images)
+
+Implement custom-shaped images within the card (e.g., rounded corners for the commodity image).
+
+Requirement: 3. UI Components (Custom-shaped images)
+
+Interactivity & Navigation:
+
+Make CommodityCard clickable.
+
+On click, navigate to the DetailScreen (to be built in next phase), passing the commodityId.
+
+Requirement: 2. Core Functionality (User input handling - gestures)
+
+Ensure cards have visual feedback.
+
+Requirement: 4. Interactive Elements (Clickable components with visual feedback)
+
+Animation (Example: Fade-in for list items):
+
+Apply a simple animation (e.g., fade-in using AnimatedVisibility or item animations in LazyColumn) to list items as they appear.
+
+Requirement: 4. Interactive Elements (Minimum of one animation)
+
+Styling: Apply the custom theme consistently.
+
+Step 3.4: Testing Commodity Listing Module
+
+Unit Tests: For HomeViewModel and any complex logic in CommodityRepositoryImpl.
+
+UI Tests: For HomeScreen (list display, item content, scrollability, navigation on click).
+
+Manual Tests:
+
+Data loading correctly from Firestore.
+
+Loading and error states.
+
+Empty list state.
+
+Image loading (placeholders, actual images, error images).
+
+Scrolling performance.
+
+Screen rotation (state, scroll position retention).
+
+Requirement: 2. Core Functionality (Configuration Changes)
+
+Project Requirements Addressed:
+
+1. Visual Design & Theming: App Bar, Consistent styling.
+
+2. Core Functionality: State management, User input handling.
+
+3. UI Components: Scrollable list, Custom-shaped images, Cards.
+
+4. Interactive Elements: Animation, Clickable components.
+
+5. Technical Requirements: Clean architecture principles applied.
+
+Phase 4: Commodity Detail Screen
+
+Step 4.1: ViewModel for Detail Screen (DetailViewModel.kt)
+
+Create DetailViewModel extending ViewModel.
+
+Inject CommodityRepository and SavedStateHandle.
+
+Retrieve commodityId from SavedStateHandle.
+
+Expose StateFlow for Resource<Commodity?>.
+
+Fetch specific commodity details using commodityRepository.getCommodityById().
+
+Requirement: 2. Core Functionality (State management using ViewModel)
+
+Step 4.2: UI for Detail Screen (DetailScreen.kt)
+
+Layout & App Bar:
+
+Use Scaffold with a TopAppBar displaying the commodity name and a back navigation icon.
+
+Requirement: 1. Visual Design & Theming (App Bar)
+
+Data Display:
+
+Observe commodity detail state from DetailViewModel.
+
+Display loading/error states.
+
+If successful, display:
+
+Commodity image (custom-shaped if desired).
+
+Commodity name.
+
+A table/grid (using Columns/Rows or LazyColumn if many districts) showing: District, Farm Gate Price (FGP), Market Price (MP).
+
+Navigation:
+
+Implement back navigation via the app bar icon and system back button to return to HomeScreen.
+
+Styling: Apply the custom theme consistently.
+
+Step 4.3: Testing Commodity Detail Module
+
+Unit Tests: For DetailViewModel logic.
+
+UI Tests: For DetailScreen (data display, back navigation).
+
+Manual Tests:
+
+Correct data display for various commodities.
+
+Navigation argument passing.
+
+Loading and error states.
+
+Screen rotation.
+
+Requirement: 2. Core Functionality (Configuration Changes)
+
+Project Requirements Addressed:
+
+1. Visual Design & Theming: App Bar, Consistent styling.
+
+2. Core Functionality: State management, Multi-screen navigation (fully implemented).
+
+5. Technical Requirements: Clean architecture.
+
+Phase 5: Final Review, Use Case Definition, and Polishing
+
+Step 5.1: Define Use Case and Scope in Documentation
+
+Formalize the "Use Case Definition" section of your MVP documentation:
+
+Title: e.g., "Access to Real-Time Commodity Prices in Uganda."
+
+Target Users: Smallholder farmers, Market traders, Agricultural extension officers.
+
+MVP Scope: Clearly state what is included (e.g., 7 districts, 21 commodities, FGP/MP data, email/password login).
+
+Out of Scope: List features explicitly not included in the MVP (e.g., admin dashboard, offline access, SMS alerts).
+
+Provide a detailed explanation of the application's intended functionality and its limitations.
+
+Requirement: 2. Core Functionality (Use Case definition and Scope Limitation)
+
+Step 5.2: Comprehensive Code and Resource Review
+
+Hardcoded Strings: Perform a project-wide search to ensure no user-facing strings are hardcoded; all must be in strings.xml.
+
+Dimension Management: Review UI code to ensure dimens.xml or standard dp/sp units are used consistently.
+
+Clean Architecture: Review separation of concerns (UI, ViewModel, Repository).
+
+Styling Consistency: Check all screens and components for adherence to the defined Material Theme.
+
+Configuration Change Handling: Double-check all screens handle rotation and other configuration changes gracefully, retaining state (primarily via ViewModels).
+
+Step 5.3: Final Testing & Bug Fixing
+
+Conduct a full regression test of all features.
+
+Test on various device sizes and Android versions (emulators and physical devices if possible).
+
+Address any remaining bugs or UI inconsistencies.
+
+Step 5.4: Prepare Deliverables
+
+Generate the signed APK/AAB.
+
+Finalize project source code (clean, comment where necessary).
+
+Update README.md with Firebase setup instructions and build/run guide.
+
+Prepare presentation slides and take screenshots of the app in action.
+
+Compile the MVP documentation (this document, your original MVP doc) into PDF.
+
+Project Requirements Addressed (Final Check):
+
+All requirements from sections 1-5 should be fully met and verified.
+
+
+This revised plan provides a more structured, requirement-driven workflow. Each phase builds a testable module, making development and debugging more manageable. Remember to adapt and adjust as you progress.

@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">AgriMarket Uganda</string>
+    
+    <!-- Authentication Strings -->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="name">Full Name</string>
+    <string name="login_title">Login to AgriMarket</string>
+    <string name="register_title">Create Account</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="email_required">Email is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="name_required">Name is required</string>
+    <string name="invalid_email">Please enter a valid email</string>
+    <string name="password_length">Password must be at least 6 characters</string>
+    
+    <!-- Home Screen Strings -->
+    <string name="home_title">Commodity Prices</string>
+    <string name="average_price">Average Price: %1$s</string>
+    <string name="no_commodities">No commodities available</string>
+    <string name="loading">Loading…</string>
+    <string name="retry">Retry</string>
+    <string name="error_loading_commodities">Error loading commodities</string>
+    
+    <!-- Detail Screen Strings -->
+    <string name="back">Back</string>
+    <string name="commodity_details">Commodity Details</string>
+    <string name="detail_title">Price Details</string>
+    <string name="price_breakdown_title">Price Breakdown</string>
+    <string name="district">District</string>
+    <string name="farm_gate_price">Farm Gate Price</string>
+    <string name="market_price">Market Price</string>
+    <string name="ugx_amount">UGX %1$.0f</string>
+    <string name="error_loading_details">Error loading commodity details</string>
+</resources>
