@@ -12,15 +12,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -41,10 +42,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -128,7 +131,7 @@ fun HomeScreen(
                     }
                     
                     uiState.commodities.isNotEmpty() -> {
-                        CommodityList(
+                        CommodityGrid(
                             commodities = uiState.commodities,
                             onCommodityClick = onNavigateToDetail
                         )
@@ -148,18 +151,20 @@ fun HomeScreen(
 }
 
 @Composable
-fun CommodityList(
+fun CommodityGrid(
     commodities: List<Commodity>,
     onCommodityClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_medium)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        itemsIndexed(commodities) { index, commodity ->
-            // Create an animated visibility state that starts as "hidden" (false) and then transitions to "shown" (true)
+        items(commodities) { commodity ->
+            // Create an animated visibility state
             val visibilityState = remember {
                 MutableTransitionState(false).apply {
                     // Start the animation immediately
@@ -167,16 +172,15 @@ fun CommodityList(
                 }
             }
             
-            // Stagger the animations with a delay based on the item index
             AnimatedVisibility(
                 visibleState = visibilityState,
-                enter = fadeIn(animationSpec = tween(durationMillis = 300, delayMillis = index * 100)) +
+                enter = fadeIn(animationSpec = tween(durationMillis = 300)) +
                         slideInVertically(
-                            initialOffsetY = { it * 2 }, // 2x the height, slide up from off-screen
-                            animationSpec = tween(durationMillis = 400, delayMillis = index * 100)
+                            initialOffsetY = { it / 2 },
+                            animationSpec = tween(durationMillis = 300)
                         )
             ) {
-                CommodityCard(
+                CommodityGridItem(
                     commodity = commodity,
                     onClick = { onCommodityClick(commodity.id) }
                 )
@@ -185,6 +189,66 @@ fun CommodityList(
     }
 }
 
+@Composable
+fun CommodityGridItem(
+    commodity: Commodity,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            // Commodity image
+            AsyncImage(
+                model = commodity.imageUrl,
+                contentDescription = commodity.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Commodity name
+            Text(
+                text = commodity.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            
+            Spacer(modifier = Modifier.height(4.dp))
+            
+            // Average price
+            Text(
+                text = stringResource(
+                    id = R.string.ugx_amount,
+                    commodity.getAverageMarketPrice()
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+// Keeping the original CommodityCard for reference if needed
+/*
 @Composable
 fun CommodityCard(
     commodity: Commodity,
@@ -245,4 +309,5 @@ fun CommodityCard(
             }
         }
     }
-} 
+}
+*/ 
